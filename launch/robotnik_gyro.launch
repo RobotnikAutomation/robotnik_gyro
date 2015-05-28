@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- load parameters -->
+  <rosparam command="load" file="$(find robotnik_gyro)/robotnik_gyro.yaml"/>
+
+  <!-- start robotnik gyro node -->
+  <node pkg="robotnik_gyro" type="robotnik_gyro" name="robotnik_gyro" output="screen"/>
+
+</launch>
+
