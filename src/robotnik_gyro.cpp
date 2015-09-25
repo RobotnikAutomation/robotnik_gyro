@@ -25,7 +25,7 @@ robotnik_gyro::robotnik_gyro( std::string port ) : desired_freq_(50) {
 
 	// Initial values
 	dsPic_data.dGyro = dsPic_data.dOffsetGyro = 0.0;
-        dsPic_data.dBatt = 0.0;
+	dsPic_data.dBatt = 0.0;
 	dsPic_data.yaw = 0.0;
 	dsPic_data.vel_yaw = 0.0;
 	pthread_mutex_init(&mutex_gyro, NULL); //Initialization for gyro's mutex
@@ -117,6 +117,15 @@ void robotnik_gyro::StateMachine(){
 	break;
 	}
 }
+
+/*!	\fn int robotnik_gyro::GetState()
+ * 	
+*/
+int robotnik_gyro::GetState()
+{
+	return iState_;
+}
+
 
 /*!	\fn int robotnik_gyro::Open(char *dev)
  * 	\brief Open serial port
@@ -899,10 +908,12 @@ int main(int argc, char** argv)
 		odom_pub.publish(odom);
 
 		// ******************************************************************************************
-		//publish the raw angle values
-		std_msgs::Float32 yaw_msg;
-		yaw_msg.data = rbk_gyro->dsPic_data.yaw;
-		yaw_pub.publish(yaw_msg);
+		// publish the raw angle values only if the component is in READY_STATE
+		if (rbk_gyro->GetState()==READY_STATE) {
+			std_msgs::Float32 yaw_msg;
+			yaw_msg.data = rbk_gyro->dsPic_data.yaw;
+			yaw_pub.publish(yaw_msg);
+			}
 		
 		// ******************************************************************************************
 		//publish battery

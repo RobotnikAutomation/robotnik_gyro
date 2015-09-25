@@ -157,8 +157,8 @@ public:
 	int Open();
 	//! Close serial port
 	int Close();
-    	//! Gets the power voltage data
-    	float GetVoltage();
+    //! Gets the power voltage data
+    float GetVoltage();
 	//! Sets internal angle
 	void SetAngle(double yaw);
 	//! Sends Reset Controller message
@@ -177,6 +177,8 @@ public:
 	void UpdateYaw();
     //! Callback - force sensor recalibration 
     bool srvCallback_Recalibration(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response);
+    //! Return component internal state
+    int GetState();
 
 private:
 	//! Sends Reset Controller message
