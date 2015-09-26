@@ -28,7 +28,8 @@
 #define DSPIC_ERROR_TIMEOUT				3
 
 //! Timeout for controlling the communication with the device (in seconds)
-#define DSPIC_TIMEOUT_COMM			 	2.0
+// #define DSPIC_TIMEOUT_COMM			 	2.0
+#define DSPIC_TIMEOUT_COMM			 	0.25
 
 #define DSPIC_DEFAULT_PORT                    	"/dev/ttyUSB0"
 #define DSPIC_DEFAULT_PARITY 		 	"none" 	//"even" "odd""none"

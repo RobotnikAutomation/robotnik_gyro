@@ -322,8 +322,8 @@ void robotnik_gyro::ReadyState(){
 			ret2 = SendResetController();
 		break;
 	        default:
-                        // Default command 
-	                ret2 = SendReadGyroBatt();
+            // Default command 
+	        ret2 = SendReadGyroBatt();
 	        break;
 	}
 
@@ -346,10 +346,13 @@ void robotnik_gyro::ReadyState(){
         }
 
 	// Checks the communication status
-	ros::Time current_time = ros::Time::now(); 
-	if (((current_time - tDsPicReply).toSec() > DSPIC_TIMEOUT_COMM) && !bSentOffsetCalibration) {
+	ros::Time current_time = ros::Time::now(); 		
+	// if (((current_time.toSec() - tDsPicReply.toSec()) > DSPIC_TIMEOUT_COMM) && !bSentOffsetCalibration) {
+	if ((current_time.toSec() - tDsPicReply.toSec()) > DSPIC_TIMEOUT_COMM) {
 		ROS_ERROR("robotnik_gyro::ReadyState: Timeout in communication with the device");
 		tDsPicReply = ros::Time::now();	// Resets the timer
+		SwitchToState(FAILURE_STATE);
+		iErrorType = DSPIC_ERROR_TIMEOUT;
         }
 
 }
