@@ -143,16 +143,24 @@ int robotnik_gyro::Open(){
           }
 	ROS_INFO("robotnik_gyro::Open: serial port opened at %s", serial->GetDevice());
 
+    // Store current value to keep measurement
+    double yaw = dsPic_data.yaw;
+
 	// Send 1st command to verify device is working
-        usleep(50000);
-        SendCalibrateOffsetGyro();
+    usleep(50000);
+    SendCalibrateOffsetGyro();
 	usleep(1200000);
-        SendReadGyroBatt();
-        usleep(50000);
-        SendCalibrateOffsetGyro();
-        usleep(1200000);
-        SendReadGyroBatt();
-        usleep(50000);
+    SendReadGyroBatt();
+    usleep(50000);
+    SendCalibrateOffsetGyro();
+    usleep(1200000);
+    SendReadGyroBatt();
+    
+    // Restore offsets
+    dsPic_data.dGyro = 0.0; // gyro will start with 0 after recal 
+    this->SetAngle( yaw );
+    
+    usleep(50000);
 	SwitchToState(INIT_STATE);
 
 	return OK;
