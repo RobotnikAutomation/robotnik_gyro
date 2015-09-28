@@ -231,9 +231,10 @@ void robotnik_gyro::InitState(){
                         count_errors_reading++;
                 break;
 		case OK:
-			// Inits dsPic reply timer
+			// Inits dsPic reply timer			
 			tDsPicReply = ros::Time::now();
-			SwitchToState(READY_STATE);
+			count_errors_reading = 0;
+			SwitchToState(READY_STATE);			
 		break;
 	}
 
@@ -250,6 +251,14 @@ void robotnik_gyro::InitState(){
 		count_errors_sending = 0;
         }
 
+	if (count_errors_reading > 10) {
+		ROS_ERROR("robotnik_gyro::InitState: device not responding.");
+		SendResetController();
+		sleep(5.0);		
+		count_errors_reading = 0;
+		SwitchToState(FAILURE_STATE);
+		iErrorType = DSPIC_ERROR_TIMEOUT;
+        }
 }
 
 /*! \fn void robotnik_gyro::ReadyState()
@@ -439,7 +448,7 @@ void robotnik_gyro::StandbyState(){
 
 	// Checks the communication status
 	ros::Time current_time = ros::Time::now(); 
-	if ( (current_time - tDsPicReply).toSec() > DSPIC_TIMEOUT_COMM) {
+	if ((current_time.toSec() - tDsPicReply.toSec()) > DSPIC_TIMEOUT_COMM) {
 		ROS_ERROR("robotnik_gyro::Standby: Timeout in communication with the device");
 		tDsPicReply = ros::Time::now();	 // Resets the timer
         }
