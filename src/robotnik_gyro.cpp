@@ -484,6 +484,10 @@ void robotnik_gyro::FailureState(){
 				usleep(timer);
 				this->Open();
 			break;
+			case DSPIC_ERROR_SPI:
+				this->Close();
+				ROS_ERROR("robotnik_gyro::FailureState: Continuous SPI error in board, board hw reset necessary");				
+			break;
 		}
 		recovery_cycles = 0;
 	}
@@ -630,9 +634,10 @@ int robotnik_gyro::ProcessMsg(char *msg){
 	int num_error = 0;
 	char command[64] = "\0";
 	double th = 0.0;
-        double batt = 0.0;
+    double batt = 0.0;
 	int received_crc = 0, crc = 0;
 	int MAX_TOKENS = 10;
+	static int spi_error_count = 0;
 
 	ptr = strtok (msg,",");
 
@@ -656,8 +661,18 @@ int robotnik_gyro::ProcessMsg(char *msg){
 	if(!strcmp(cReceivedTokens[0], "ERROR")){
 		num_error = atoi(cReceivedTokens[1]);
 		ROS_ERROR("robotnik_gyro::ProcessMsg: Error from device: %s,%s ", cReceivedTokens[0], cReceivedTokens[1]);
+		if (num_error == ERROR_SPI) {
+			spi_error_count++;
+			if (spi_error_count > 10) {
+				SwitchToState(FAILURE_STATE);
+				iErrorType = DSPIC_ERROR_SPI;
+				}
+			}
 		return num_error;
         }
+    else {
+		spi_error_count = 0;
+		}
 
         // Reset detected
         if (i>=1) {

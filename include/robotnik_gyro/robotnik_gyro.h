@@ -26,6 +26,7 @@
 #define DSPIC_ERROR_OPENING				1
 #define DSPIC_ERROR_SERIALCOMM		 	2
 #define DSPIC_ERROR_TIMEOUT				3
+#define DSPIC_ERROR_SPI                 4
 
 //! Timeout for controlling the communication with the device (in seconds)
 // #define DSPIC_TIMEOUT_COMM			 	2.0
